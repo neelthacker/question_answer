@@ -37,3 +37,30 @@ class AnswerSerializer(serializers.ModelSerializer):
             question = Question.objects.get(id = self.context.get('question_id'))
             answer = Answer.objects.create(answer_user=user, question=question, **validated_data)
             return answer
+
+    def update(self, request, *args, **kwargs):
+        try:
+            question = request
+            if self.context.get('status') and self.context.get('status').lower() == 'true':
+                status = True
+            else:
+                status = False
+            question.is_show = status
+            question.save()
+            return question
+        except:
+            return ['No Answers Found']
+
+
+class QuestionAnswerSerializer(serializers.ModelSerializer):
+    answers = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Question
+        fields = ('id','title', 'body', 'tags', 'answers')
+
+    def get_answers(self, object):
+        answers = Answer.objects.filter(question=object)
+        if answers:
+            return [answer.answer for answer in answers]
+        return []

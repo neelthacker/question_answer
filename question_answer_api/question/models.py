@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator
 
 
 QUESTION_TAGS = (
@@ -24,6 +25,8 @@ class Question(TimeStampedModel):
     title = models.CharField('Title', max_length=200)
     body = models.TextField()
     tags = models.CharField(choices=QUESTION_TAGS, max_length=30)
+    up_vote = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+    down_vote = models.IntegerField(default=0, validators=[MinValueValidator(0)])
 
     class Meta:
         verbose_name = "Question"
@@ -38,5 +41,7 @@ class Answer(TimeStampedModel):
         Question, on_delete=models.CASCADE)
     answer = models.TextField()
     is_show = models.BooleanField(default=True)
+    up_vote = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+    down_vote = models.IntegerField(default=0, validators=[MinValueValidator(0)])
 
 
